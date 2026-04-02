@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import LitLabLogo from './LitLabLogo';
 import SearchBar from './SearchBar';
-import LanguageSelector from './LanguageSelector';
+import { useSession } from 'next-auth/react';
 
 export default function Header() {
-  const [lang, setLang] = useState('en');
+  const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isLoggedIn = !!session?.user;
 
   return (
-    <header className="sticky top-0 z-50 bg-primary border-b-2 border-black">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
@@ -28,31 +29,38 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
             <Link
               href="/"
-              className="text-sm font-bold text-black hover:text-black/70 transition-colors"
+              className="text-sm font-bold text-gray-700 hover:text-black transition-colors"
             >
               Home
             </Link>
             <Link
               href="/catalog"
-              className="text-sm font-bold text-black hover:text-black/70 transition-colors"
+              className="text-sm font-bold text-gray-700 hover:text-black transition-colors"
             >
               Catalog
             </Link>
-            <Link
-              href="/dashboard"
-              className="text-sm font-bold text-black hover:text-black/70 transition-colors"
-            >
-              Dashboard
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-bold bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-colors"
+              >
+                My Cabinet
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-bold bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
           </nav>
 
-          {/* Language selector */}
-          <LanguageSelector value={lang} onChange={setLang} compact />
 
           {/* Mobile menu button */}
           <button
             type="button"
-            className="md:hidden p-2 rounded-lg hover:bg-black/10 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
@@ -69,7 +77,7 @@ export default function Header() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden pb-4 border-t border-black/20 mt-2 pt-3">
+          <div className="md:hidden pb-4 border-t border-gray-200 mt-2 pt-3">
             <div className="mb-3">
               <SearchBar />
             </div>
@@ -77,24 +85,34 @@ export default function Header() {
               <Link
                 href="/"
                 onClick={() => setMenuOpen(false)}
-                className="text-sm font-bold text-black py-2 px-3 rounded-lg hover:bg-black/10 transition-colors"
+                className="text-sm font-bold text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Home
               </Link>
               <Link
                 href="/catalog"
                 onClick={() => setMenuOpen(false)}
-                className="text-sm font-bold text-black py-2 px-3 rounded-lg hover:bg-black/10 transition-colors"
+                className="text-sm font-bold text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Catalog
               </Link>
-              <Link
-                href="/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="text-sm font-bold text-black py-2 px-3 rounded-lg hover:bg-black/10 transition-colors"
-              >
-                Dashboard
-              </Link>
+              {isLoggedIn ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm font-bold text-white bg-black py-2 px-3 rounded-lg transition-colors"
+                >
+                  My Cabinet
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm font-bold text-white bg-black py-2 px-3 rounded-lg transition-colors"
+                >
+                  Sign In
+                </Link>
+              )}
             </nav>
           </div>
         )}

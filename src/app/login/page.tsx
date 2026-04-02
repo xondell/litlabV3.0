@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -13,10 +14,6 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
 
   const router = useRouter();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,31 +21,31 @@ export default function AuthPage() {
     setMessage('');
 
     if (mode === 'register') {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username, full_name: username },
-        },
+      const res = await fetch('/litlab/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, username }),
       });
 
-      if (error) {
-        setMessage(`Error: ${error.message}`);
+      if (!res.ok) {
+        const data = await res.json();
+        setMessage(`Error: ${data.message || 'Something went wrong'}`);
       } else {
-        setMessage('Registration successful! Check your email or sign in.');
+        setMessage('Registration successful! Please sign in.');
         setMode('login');
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
+      const res = await signIn('credentials', {
+        redirect: false,
         email,
         password,
       });
 
-      if (error) {
-        setMessage(`Error: ${error.message}`);
+      if (res?.error) {
+        setMessage(`Error: Invalid email or password`);
       } else {
         router.refresh();
-        router.push('/add-content');
+        router.push('/dashboard');
       }
     }
 
@@ -56,82 +53,102 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#C1FF00] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-[#C1FF00] border-[3px] border-black p-8 shadow-[8px_8px_0px_0px_#000000]">
-        <h1 className="text-4xl font-black text-black uppercase mb-6 tracking-tight">
-          {mode === 'login' ? 'Login' : 'Register'}
-        </h1>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Back to home */}
+        <div className="mb-6">
+          <Link href="/" className="text-sm font-semibold text-gray-500 hover:text-black transition-colors">
+            ← Back to LitLab
+          </Link>
+        </div>
 
-        {message && (
-          <div className="mb-6 p-4 border-[3px] border-black bg-white text-black font-bold">
-            {message}
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-black text-black">
+              {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+            </h1>
+            <p className="text-sm font-medium text-gray-500 mt-2">
+              {mode === 'login' ? 'Sign in to your reader cabinet' : 'Join the literary laboratory'}
+            </p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {mode === 'register' && (
-            <div>
-              <label className="block font-black text-black uppercase text-sm mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 border-[3px] border-black bg-white text-black font-bold focus:outline-none focus:ring-0"
-                placeholder="litlab_student"
-              />
+          {message && (
+            <div className={`mb-6 p-4 rounded-xl text-sm font-semibold ${
+              message.startsWith('Error') 
+                ? 'bg-red-50 text-red-700 border border-red-200' 
+                : 'bg-green-50 text-green-700 border border-green-200'
+            }`}>
+              {message}
             </div>
           )}
 
-          <div>
-            <label className="block font-black text-black uppercase text-sm mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border-[3px] border-black bg-white text-black font-bold focus:outline-none focus:ring-0"
-              placeholder="you@school.edu"
-            />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {mode === 'register' && (
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-1.5">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium text-black outline-none focus:border-black transition-colors"
+                  placeholder="Your name"
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium text-black outline-none focus:border-black transition-colors"
+                placeholder="you@school.edu"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium text-black outline-none focus:border-black transition-colors"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 bg-black text-white font-black text-sm rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-all duration-200"
+            >
+              {loading ? 'Processing...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === 'login' ? 'register' : 'login');
+                setMessage('');
+              }}
+              className="text-sm font-semibold text-gray-500 hover:text-black transition-colors"
+            >
+              {mode === 'login' ? "Don't have an account? Register" : 'Already have an account? Login'}
+            </button>
           </div>
-
-          <div>
-            <label className="block font-black text-black uppercase text-sm mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border-[3px] border-black bg-white text-black font-bold focus:outline-none focus:ring-0"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 border-[3px] border-black bg-black text-[#C1FF00] font-black uppercase tracking-widest hover:invert transition-all duration-200 disabled:opacity-50"
-          >
-            {loading ? 'Processing...' : mode === 'login' ? 'Sign In' : 'Create Account'}
-          </button>
-        </form>
-
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === 'login' ? 'register' : 'login');
-            setMessage('');
-          }}
-          className="mt-6 w-full text-center font-bold text-black uppercase text-sm hover:underline"
-        >
-          {mode === 'login' ? "Don't have an account? Register" : 'Already have an account? Login'}
-        </button>
+        </div>
       </div>
     </div>
   );

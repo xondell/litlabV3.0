@@ -27,8 +27,8 @@ export default function SearchBar({ className = '', placeholder = 'Search books,
   return (
     <form onSubmit={handleSearch} className={`relative ${className}`}>
       <div
-        className={`flex items-center bg-black/10 rounded-full overflow-hidden border-2 transition-all duration-300 ${
-          isFocused ? 'border-black shadow-[0_0_0_3px_rgba(0,0,0,0.15)]' : 'border-transparent'
+        className={`flex items-center bg-gray-100 rounded-full overflow-hidden border transition-all duration-300 ${
+          isFocused ? 'border-gray-400 shadow-[0_0_0_3px_rgba(0,0,0,0.06)]' : 'border-gray-200'
         }`}
       >
         <svg

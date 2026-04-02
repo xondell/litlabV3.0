@@ -24,7 +24,7 @@ export default function LanguageSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 font-bold rounded-full border-2 border-black transition-all duration-200 hover:bg-black hover:text-primary ${
+        className={`flex items-center gap-2 font-bold rounded-full border border-gray-300 transition-all duration-200 hover:bg-gray-100 ${
           compact ? 'px-3 py-1.5 text-sm' : 'px-4 py-2 text-sm'
         }`}
         aria-label="Select language"
@@ -45,7 +45,7 @@ export default function LanguageSelector({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-xl shadow-xl border-2 border-black overflow-hidden min-w-[160px]">
+          <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden min-w-[160px]">
             {SUPPORTED_LANGUAGES.map((lang) => (
               <button
                 key={lang.code}
@@ -54,8 +54,8 @@ export default function LanguageSelector({
                   onChange(lang.code);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors hover:bg-primary/30 ${
-                  value === lang.code ? 'bg-primary/20' : ''
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 ${
+                  value === lang.code ? 'bg-gray-100' : ''
                 }`}
               >
                 <span className="text-lg">{lang.flag}</span>
