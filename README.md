@@ -2,40 +2,42 @@
 
 # 📚 LitLab V3.0
 
-### A multimedia literature hub that connects physical books with student-created digital experiences
+### QR-connected multimedia literature learning
 
-Scan a book. Explore podcasts, videos, games, infographics, PDFs, and interactive materials created around literature.
+LitLab connects physical books with student-created **podcasts, videos, games, infographics, PDFs and interactive materials** through QR-linked book pages.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?logo=supabase&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-DB_%7C_Auth_%7C_Storage-3FCF8E?logo=supabase&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
 </div>
 
 ---
 
-## 💡 What is LitLab?
+## What is LitLab?
 
-LitLab transforms a traditional library book into an entry point for a richer learning experience.
+A physical book becomes the entry point to a richer digital learning experience.
 
-A physical book can be connected through a **QR code** to student-created media: podcasts, character maps, videos, games, infographics, PDFs, and other learning materials.
+```text
+Physical book → QR code → LitLab book page → Student-created media
+```
 
-The result is a shared literature laboratory where reading becomes collaborative, multimedia, and easier to explore.
+The project explores how reading, classroom creativity and multimedia publishing can live in one shared library.
 
-## ✨ Features
+## Features
 
-- 🔗 **QR-connected books** — bridge physical library books and digital content
-- 🧪 **Universal content form** — create a new book or attach a project to an existing one
-- 🎧 **Persistent audio player** — keep podcast playback active while navigating
-- 🎭 **Interactive theater** — browse video, PDF, visual and character-based media
-- 🌍 **Four languages** — English, Russian, Romanian, and French
-- 🔐 **Protected creator routes** — authenticated publishing flows
-- 🗄 **Supabase storage** — store covers and project media
-- ⚡ **Next.js App Router** — full-stack application structure
-- 🟢 **Brutalist visual identity** — high-contrast lime/black interface
+- 🔗 QR-connected book pages
+- 🧪 universal creation form for books and projects
+- 🎧 persistent audio player
+- 🎭 video, PDF, visual and character-based media
+- 🌍 English, Russian, Romanian and French
+- 🔐 authenticated creator routes
+- 🗄 Supabase database and media storage
+- ⚡ Next.js App Router
+- 🟢 distinctive high-contrast brutalist UI
 
-## 🛠 Tech stack
+## Tech stack
 
 | Area | Technology |
 |---|---|
@@ -43,13 +45,13 @@ The result is a shared literature laboratory where reading becomes collaborative
 | Language | TypeScript |
 | Styling | Tailwind CSS 4 |
 | Database | Supabase PostgreSQL |
-| Authentication | Supabase Auth |
+| Auth | Supabase Auth |
 | Storage | Supabase Storage |
 | State | Zustand |
-| Motion/UI | Framer Motion |
+| Motion | Framer Motion |
 | Icons | Lucide |
 
-## 🚀 Getting started
+## Local setup
 
 ```bash
 git clone https://github.com/xondell/litlabV3.0.git
@@ -60,56 +62,48 @@ npm install
 Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Start development:
+Run:
 
 ```bash
 npm run dev
 ```
 
-## 🗄 Database setup
+## Database / storage
 
-Run the schema from:
+Apply:
 
 ```text
 supabase/schema_v2.sql
 ```
 
-in the Supabase SQL Editor.
-
-Create two public Storage buckets:
+Create public Storage buckets:
 
 ```text
 covers
 lab-materials
 ```
 
-## 🧭 Core experience
+## Experience map
 
 ```mermaid
 flowchart LR
-    B[Physical book] --> Q[QR code]
-    Q --> P[LitLab book page]
-    P --> A[Podcast]
+    B[Book] --> QR[QR code]
+    QR --> P[LitLab page]
+    P --> A[Audio]
     P --> V[Video]
     P --> G[Games]
-    P --> I[Infographics / PDFs]
+    P --> D[PDF / visual material]
 ```
 
-## 🎨 Design language
+## Version note
 
-LitLab V3.0 deliberately uses a bold visual system:
+This repository preserves the **V3.0 product baseline**.
 
-- high contrast;
-- lime green + black;
-- oversized typography;
-- energetic motion;
-- clear content hierarchy.
-
-The style is meant to make a school literature platform feel experimental rather than institutional.
+The newer [**LitLab V4.5**](https://github.com/xondell/LitLabV4.5) evolves the concept with freemium access, subscription logic, Stripe integration and a newer Supabase model.
 
 ---
 
